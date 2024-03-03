@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "hardcore/ts"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/prefer-readonly-parameter-types": "off",
+    "@typescript-eslint/prefer-destructuring": "off",
+    "max-len": "off"
+  }
+}
