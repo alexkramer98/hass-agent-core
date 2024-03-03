@@ -8,6 +8,6 @@
   "rules": {
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
     "@typescript-eslint/prefer-destructuring": "off",
-    "max-len": "off"
+    "max-len": ["error", 120]
   }
 }
