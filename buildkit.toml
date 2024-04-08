@@ -1,0 +1,2 @@
+[registry."server.osso:5000"]
+  http = true

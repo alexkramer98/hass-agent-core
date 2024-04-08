@@ -1,6 +1,16 @@
+import type HassClient from "./services/HassClient";
+import type OllamaClient from "./services/OllamaClient";
+
 export interface Intent {
   triggers: string[];
-  handle: (vars: { [key: string]: string | undefined }) => IntentResponse;
+  handle: (context: {
+    vars: { [key: string]: string | undefined };
+    triggerSentence: string;
+    hassClient: HassClient;
+    ollamaClient: OllamaClient;
+  }) => Promise<IntentResponse>;
+
+  // handle: (vars: { [key: string]: string | undefined }) => IntentResponse;
 }
 
 export interface IntentResponse {

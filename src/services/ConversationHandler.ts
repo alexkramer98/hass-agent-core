@@ -1,6 +1,8 @@
 import type InputParser from "./InputParser";
 import type { Intent, IntentVars } from "../interfaces";
 import crypto from "crypto";
+import type HassClient from "./HassClient";
+import type OllamaClient from "./OllamaClient";
 
 export default class ConversationHandler {
   private readonly activeConversations: {
@@ -11,9 +13,17 @@ export default class ConversationHandler {
     messageId?: string;
   }[] = [];
   private readonly inputParser: InputParser;
+  private readonly hassClient: HassClient;
+  private readonly ollamaClient: OllamaClient;
 
-  public constructor(inputParser: InputParser) {
+  public constructor(
+    inputParser: InputParser,
+    hassClient: HassClient,
+    ollamaClient: OllamaClient,
+  ) {
     this.inputParser = inputParser;
+    this.hassClient = hassClient;
+    this.ollamaClient = ollamaClient;
   }
 
   private findBy(deviceId?: string, messageId?: string) {
@@ -44,7 +54,7 @@ export default class ConversationHandler {
     return undefined;
   }
 
-  public handle(message: string, deviceId?: string, messageId?: string) {
+  public async handle(message: string, deviceId?: string, messageId?: string) {
     let intent: Intent | undefined = undefined;
     let vars: IntentVars = {};
 
@@ -70,17 +80,26 @@ export default class ConversationHandler {
       vars = intentData.vars;
     }
 
-    const response = intent.handle(vars);
+    const response = await intent.handle({
+      vars,
+      hassClient: this.hassClient,
+      ollamaClient: this.ollamaClient,
+      triggerSentence: message,
+    });
 
     if (response.answerKey === undefined) {
       return {
         id: "None",
         msg: response.message,
       };
+    } else if (deviceId !== undefined) {
+      void this.hassClient.callService("script/turn_on", {
+        variables: { device_id: deviceId },
+        entity_id: "script.rewake_satellite",
+      });
     }
 
-    const newMessageId =
-      deviceId === undefined ? undefined : crypto.randomUUID();
+    const newMessageId = crypto.randomUUID();
 
     this.activeConversations.push({
       intent,

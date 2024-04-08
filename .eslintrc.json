@@ -8,6 +8,8 @@
   "rules": {
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
     "@typescript-eslint/prefer-destructuring": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "import/no-unused-modules": "off",
     "max-len": ["error", 120]
   }
 }

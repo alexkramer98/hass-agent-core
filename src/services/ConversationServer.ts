@@ -11,14 +11,14 @@ export default class ConversationServer {
     this.conversationHandler = conversationHandler;
     this.app.use(bodyParser.json());
 
-    this.app.post("/process", (request, response) => {
+    this.app.post("/process", async (request, response) => {
       console.log(request.body);
 
       const { message, deviceId, messageId } = this.validatePayload(
         request.body,
       );
 
-      const reply = this.conversationHandler.handle(
+      const reply = await this.conversationHandler.handle(
         message,
         deviceId,
         messageId,
