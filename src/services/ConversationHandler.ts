@@ -3,6 +3,7 @@ import type { Intent, IntentVars } from "../interfaces";
 import crypto from "crypto";
 import type HassClient from "./HassClient";
 import type OllamaClient from "./OllamaClient";
+import type { HassConversationResponse } from "../interfaces";
 
 export default class ConversationHandler {
   private readonly activeConversations: {
@@ -69,11 +70,32 @@ export default class ConversationHandler {
     }
 
     if (intent === undefined) {
+      //try to find the intent here
       const intentData = this.inputParser.getIntent(message);
+
       if (!intentData) {
+        //try to run it through the default conversation handler
+        const response = await this.hassClient.processConversation(message);
+
+        const data = response.data.response;
+
+        const isError = data.response_type === "error";
+        if (isError) {
+          if (data.data.code === "no_intent_match") {
+            return {
+              id: "None",
+              msg: "Ik snap het niet man.",
+            };
+          }
+          return {
+            id: "None",
+            msg: "Er ging shit stuk.",
+          };
+        }
+
         return {
           id: "None",
-          msg: "Ik snap het niet man.",
+          msg: data.speech.plain.speech,
         };
       }
       intent = intentData.intent;

@@ -1,5 +1,5 @@
-FROM node:20
-COPY package.json yarn.lock .env tsconfig.json src/ ./
-#RUN ls -la && exit 1
+FROM node:20-alpine
+COPY package.json yarn.lock tsconfig.json ./
 RUN yarn install --immutable
+COPY src /src/
 CMD ["yarn", "start"]

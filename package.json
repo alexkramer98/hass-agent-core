@@ -2,8 +2,8 @@
   "name": "hass-goat-node",
   "packageManager": "yarn@4.1.0",
   "scripts": {
-    "start": "tsx src/index.ts",
-    "publish": "docker buildx create --config buildkit.toml --use && docker buildx build --push --platform linux/amd64 -t server.osso:5000/alexkramer98/hass-agent-core ."
+    "start": "tsx ./src/index.ts",
+    "publish": "docker buildx create --use && docker buildx build --push --platform linux/amd64 -t alexkramer98/hass-agent-core ."
   },
   "dependencies": {
     "@types/express": "^4.17.21",

@@ -22,6 +22,29 @@ export interface IntentVars {
   [key: string]: string;
 }
 
+export interface HassConversationResponse {
+  response: {
+    speech: {
+      plain: {
+        speech: string;
+        extra_data: null;
+      };
+    };
+    card: {
+      [key: string]: unknown;
+    };
+    language: string;
+    response_type: string;
+    data: {
+      code?: string;
+      targets?: unknown[];
+      success?: unknown[];
+      failed?: unknown[];
+    };
+  };
+  conversation_id: null;
+}
+
 export const defineIntent = (intent: Intent) => intent;
 
 export const reply = (message: string, answerKey: string): IntentResponse => ({

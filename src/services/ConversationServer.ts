@@ -12,7 +12,7 @@ export default class ConversationServer {
     this.app.use(bodyParser.json());
 
     this.app.post("/process", async (request, response) => {
-      console.log(request.body);
+      console.log("processing: ", request.body);
 
       const { message, deviceId, messageId } = this.validatePayload(
         request.body,
@@ -24,7 +24,7 @@ export default class ConversationServer {
         messageId,
       );
 
-      console.log("rep", reply);
+      console.log("replying:", reply);
       response.send(reply);
     });
 

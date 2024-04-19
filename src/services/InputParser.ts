@@ -35,7 +35,9 @@ export default class InputParser {
     const filenames = await glob("src/intents/*.ts");
     for (const filename of filenames) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
-      const intent = (await import(filename.replace("src", "../"))).default;
+      const intent = (
+        await import(filename.replace("src", "../").replace("/", ""))
+      ).default;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.intents.push(intent);
     }
