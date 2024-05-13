@@ -1,17 +1,16 @@
 import axios from "axios";
-import { HassConversationResponse } from "../interfaces";
+
+import type { HassConversationResponse } from "../interfaces";
 
 export default class HassClient {
-  private readonly token: string;
-  private readonly baseUrl: string;
+  public constructor(
+    private readonly baseUrl: string,
+    private readonly token: string,
+  ) {}
 
-  public constructor(baseUrl: string, token: string) {
-    this.baseUrl = baseUrl;
-    this.token = token;
-  }
-
+  // eslint-disable-next-line etc/no-misused-generics,etc/no-t
   public async callService<T>(name: string, data: object) {
-    return await this.callApi<T>("services/" + name, data);
+    return await this.callApi<T>(`services/${name}`, data);
   }
 
   public async processConversation(text: string) {
@@ -23,13 +22,13 @@ export default class HassClient {
     );
   }
 
+  // eslint-disable-next-line etc/no-misused-generics,etc/no-t
   private async callApi<T>(endpoint: string, data: object) {
-    return await axios.post<T>(this.baseUrl + "/api/" + endpoint, data, {
+    return await axios.post<T>(`${this.baseUrl}/api/${endpoint}`, data, {
       headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+        Authorization: `Bearer ${this.token}`,
+
         "Content-Type": "application/json",
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Authorization: "Bearer " + this.token,
       },
     });
   }

@@ -1,5 +1,6 @@
 {
   "extends": [
+    "hardcore",
     "hardcore/ts"
   ],
   "parserOptions": {
@@ -9,7 +10,30 @@
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
     "@typescript-eslint/prefer-destructuring": "off",
     "@typescript-eslint/naming-convention": "off",
+    "no-console": "off",
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
     "import/no-unused-modules": "off",
-    "max-len": ["error", 120]
-  }
+    "max-len": ["error", 120],
+    "@typescript-eslint/parameter-properties": ["error", { "prefer": "parameter-property" }],
+    "no-undef-init": "off",
+    "compat/compat": "off",
+    "camelcase": "off",
+    "func-style": ["error","expression"]
+  },
+  "overrides": [
+    {
+      "files": "src/intents/*",
+      "rules": {
+        "import/no-anonymous-default-export": "off",
+        "import/no-duplicates": "off",
+        "no-duplicate-imports": "off",
+        "putout/putout": ["error", {
+          "rules": {
+            "merge-duplicate-imports": "off",
+            "remove-nested-blocks": "off"
+          }
+        }]
+      }
+    }
+  ]
 }

@@ -1,57 +1,74 @@
 import type HassClient from "./services/HassClient";
 import type OllamaClient from "./services/OllamaClient";
 
-export interface Intent {
-  triggers: string[];
-  handle: (context: {
-    vars: { [key: string]: string | undefined };
-    triggerSentence: string;
-    hassClient: HassClient;
-    ollamaClient: OllamaClient;
-  }) => Promise<IntentResponse>;
+export interface IntentHandlerContext {
+  hassClient: HassClient;
+  ollamaClient: OllamaClient;
+}
 
-  // handle: (vars: { [key: string]: string | undefined }) => IntentResponse;
+export interface IntentHandlerVariables {
+  [key: string]: string;
+}
+
+// eslint-disable-next-line etc/prefer-interface
+export type IntentResponseHandler = (
+  response: string,
+) => Promise<IntentResponse>;
+
+export interface Intent {
+  handler: (
+    context: IntentHandlerContext,
+    variables: IntentHandlerVariables,
+  ) => Promise<IntentResponse>;
+  triggers: string[];
 }
 
 export interface IntentResponse {
   message?: string;
-  answerKey?: string;
+  responseHandler?: IntentResponseHandler;
 }
 
-export interface IntentVars {
+export interface IntentVariables {
   [key: string]: string;
 }
 
 export interface HassConversationResponse {
+  conversation_id: null;
   response: {
-    speech: {
-      plain: {
-        speech: string;
-        extra_data: null;
-      };
-    };
     card: {
       [key: string]: unknown;
     };
-    language: string;
-    response_type: string;
     data: {
       code?: string;
-      targets?: unknown[];
-      success?: unknown[];
       failed?: unknown[];
+      success?: unknown[];
+      targets?: unknown[];
+    };
+    language: string;
+    response_type: string;
+    speech: {
+      plain: {
+        extra_data: null;
+        speech: string;
+      };
     };
   };
-  conversation_id: null;
+}
+
+export interface IntentPendingAnswer {
+  deviceId?: string;
+  intent: Intent;
+  messageId?: string;
+  responseHandler: IntentResponseHandler;
+  variables: IntentVariables;
 }
 
 export const defineIntent = (intent: Intent) => intent;
 
-export const reply = (message: string, answerKey: string): IntentResponse => ({
-  message: message,
-  answerKey: answerKey,
-});
-
-export const close = (message?: string): IntentResponse => ({
+export const reply = (
+  message: string,
+  responseHandler?: IntentResponseHandler,
+): IntentResponse => ({
   message,
+  responseHandler,
 });
