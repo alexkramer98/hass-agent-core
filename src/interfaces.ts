@@ -24,7 +24,7 @@ export interface Intent {
 }
 
 export interface IntentResponse {
-  message?: string;
+  message: string;
   responseHandler?: IntentResponseHandler;
 }
 
@@ -61,6 +61,11 @@ export interface IntentPendingAnswer {
   messageId?: string;
   responseHandler: IntentResponseHandler;
   variables: IntentVariables;
+}
+
+export interface MatchedIntent {
+  intent: Intent;
+  matchedVariables: IntentVariables;
 }
 
 export const defineIntent = (intent: Intent) => intent;

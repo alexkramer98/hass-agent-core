@@ -8,10 +8,10 @@ import { defineIntent, reply } from "../interfaces";
 const BENEDEN_DEVICE_ID = "vacuum.eufy_beneden";
 const BOVEN_DEVICE_ID = "vacuum.eufy_boven";
 
-async function handler(
+const handler = async (
   context: IntentHandlerContext,
   variables: IntentHandlerVariables,
-): Promise<IntentResponse> {
+): Promise<IntentResponse> => {
   const vacuumsToStart = [];
 
   let message = undefined;
@@ -62,14 +62,14 @@ async function handler(
   await Promise.all(
     vacuumsToStart.map(
       async (entity_id) =>
-        await context.hassClient.callService("vacuum/start", {
+        await context.hassClient.callService("vacuum/start2", {
           entity_id,
         }),
     ),
   );
 
   return reply(message);
-}
+};
 
 export default defineIntent({
   handler,

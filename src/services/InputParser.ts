@@ -1,6 +1,6 @@
 import { glob } from "glob";
 
-import type { Intent } from "../interfaces";
+import type { Intent, MatchedIntent } from "../interfaces";
 
 export default class InputParser {
   private intents: Intent[] = [];
@@ -18,7 +18,7 @@ export default class InputParser {
     return new RegExp(`^${regexString}$`);
   }
 
-  public matchIntent(sentence: string) {
+  public matchIntent(sentence: string): MatchedIntent | undefined {
     for (const intent of this.intents) {
       for (const trigger of intent.triggers) {
         const regex = this.getTriggerRegex(trigger);
