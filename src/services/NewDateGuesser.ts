@@ -82,7 +82,7 @@ export default class NewDateGuesser {
     return Number.isNaN(number) ? undefined : number;
   }
 
-  private extractPeriod(input: string) {
+  private parsePeriod(input: string) {
     let period: "afternoon" | "evening" | "morning" | "night" | undefined =
       undefined;
 
@@ -96,28 +96,28 @@ export default class NewDateGuesser {
       period = "evening";
     }
 
-    return period;
+    return { period };
   }
 
-  private extractWholeHour(input: string) {
+  private parseFullHour(input: string) {
     return {
       hours: this.getNumberOrUndefined(
         /(?<hours>\d\d?) uur/v.exec(input)?.groups?.hours,
       ),
+
+      minutes: 0,
     };
   }
 
-  private extractAfterHour(input: string) {
-    let hours = undefined;
-    let minutes = undefined;
-
+  private parseAfterHour(input: string) {
     const testResult =
       /(?:(?<minutes>\d\d?)|kwart) over (?:half )?(?<hours>\d\d?)/v.exec(
         input,
       )?.groups;
 
-    hours = this.getNumberOrUndefined(testResult?.hours);
-    minutes = this.getNumberOrUndefined(testResult?.minutes);
+    const hours = this.getNumberOrUndefined(testResult?.hours);
+
+    let minutes = this.getNumberOrUndefined(testResult?.minutes);
 
     if (minutes !== undefined && input.includes("half")) {
       minutes += HALF_HOUR;
@@ -130,17 +130,15 @@ export default class NewDateGuesser {
     return { hours, minutes };
   }
 
-  private extractBeforeHour(input: string) {
-    let hours = undefined;
-    let minutes = undefined;
-
+  // eslint-disable-next-line max-statements
+  private parseBeforeHour(input: string) {
     const testResult =
       /(?:(?<minutes>\d\d?)|kwart) voor (?:half )?(?<hours>\d\d?)/v.exec(
         input,
       )?.groups;
 
-    hours = this.getNumberOrUndefined(testResult?.hours);
-    minutes = this.getNumberOrUndefined(testResult?.minutes);
+    let hours = this.getNumberOrUndefined(testResult?.hours);
+    let minutes = this.getNumberOrUndefined(testResult?.minutes);
 
     if (hours !== undefined) {
       hours -= 1;
@@ -155,13 +153,13 @@ export default class NewDateGuesser {
     }
 
     if (input.includes("kwart")) {
-      minutes = QUARTER_HOUR;
+      minutes = FULL_HOUR - QUARTER_HOUR;
     }
 
     return { hours, minutes };
   }
 
-  private extractHalfHour(input: string) {
+  private parseHalfHour(input: string) {
     let hours = undefined;
 
     const testResult = /half (?<hours>\d\d?)/v.exec(input)?.groups;
@@ -172,55 +170,42 @@ export default class NewDateGuesser {
       hours -= 1;
     }
 
-    return { hours };
+    return { hours, minutes: HALF_HOUR };
   }
 
-  // eslint-disable-next-line max-statements
   private parseAbsoluteTime(input: string) {
-    const period = this.extractPeriod(input);
-
     if (input.includes("uur")) {
       return {
-        hours: this.extractWholeHour(input).hours,
-        minutes: undefined,
-        period,
+        ...this.parseFullHour(input),
+        ...this.parsePeriod(input),
       };
     }
 
     if (input.includes("over")) {
-      const { hours, minutes } = this.extractAfterHour(input);
-
       return {
-        hours,
-        minutes,
-        period,
+        ...this.parseAfterHour(input),
+        ...this.parsePeriod(input),
       };
     }
 
     if (input.includes("voor")) {
-      const { hours, minutes } = this.extractBeforeHour(input);
-
       return {
-        hours,
-        minutes,
-        period,
+        ...this.parseBeforeHour(input),
+        ...this.parsePeriod(input),
       };
     }
 
     if (input.includes("half")) {
-      const { hours } = this.extractHalfHour(input);
-
       return {
-        hours,
-        minutes: undefined,
-        period,
+        ...this.parseHalfHour(input),
+        ...this.parsePeriod(input),
       };
     }
 
     return {
       hours: undefined,
       minutes: undefined,
-      period: undefined,
+      ...this.parsePeriod(input),
     };
   }
 
