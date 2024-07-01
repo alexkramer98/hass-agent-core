@@ -27,12 +27,24 @@
         "import/no-anonymous-default-export": "off",
         "import/no-duplicates": "off",
         "no-duplicate-imports": "off",
-        "putout/putout": ["error", {
-          "rules": {
-            "merge-duplicate-imports": "off",
-            "remove-nested-blocks": "off"
+        "putout/putout": [
+          "error",
+          {
+            "rules": {
+              "merge-duplicate-imports": "off",
+              "remove-nested-blocks": "off"
+            }
           }
-        }]
+        ]
+      }
+    },
+    {
+      "files": ["src/services/DateGuesser.ts", "src/services/NewDateGuesser.ts"],
+      "rules": {
+        "perfectionist/sort-objects": "off",
+        "security/detect-unsafe-regex": "off",
+        "max-len": "off",
+        "sonarjs/elseif-without-else": "off"
       }
     }
   ]

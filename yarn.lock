@@ -3898,7 +3898,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.10":
+"dayjs@npm:^1.11.11":
   version: 1.11.11
   resolution: "dayjs@npm:1.11.11"
   checksum: 10c0/0131d10516b9945f05a57e13f4af49a6814de5573a494824e103131a3bbe4cc470b1aefe8e17e51f9a478a22cd116084be1ee5725cedb66ec4c3f9091202dc4b
@@ -6498,7 +6498,7 @@ __metadata:
     "@types/express": "npm:^4.17.21"
     axios: "npm:^1.6.7"
     body-parser: "npm:^1.20.2"
-    dayjs: "npm:^1.11.10"
+    dayjs: "npm:^1.11.11"
     dotenv: "npm:^16.4.5"
     eslint: "npm:^8.57.0"
     eslint-config-hardcore: "npm:^45.6.0"

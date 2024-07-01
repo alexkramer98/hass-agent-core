@@ -73,5 +73,6 @@ const handler = async (
 
 export default defineIntent({
   handler,
-  triggers: ["ga stofzuigen", "ga {where} stofzuigen", "ga stofzuigen {where}"],
+
+  triggers: ["ga stof ?zuigen[ {where}]", "ga {where} stof ?zuigen"],
 });

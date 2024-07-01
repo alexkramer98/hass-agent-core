@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 
+import DateGuesser from "./services/DateGuesser";
 import HassClient from "./services/HassClient";
 import InputParser from "./services/InputParser";
 import IntentHandler from "./services/IntentHandler";
@@ -33,3 +34,12 @@ const intentHandler = new IntentHandler(inputParser, hassClient, ollamaClient);
 const server = new Server(intentHandler);
 
 server.listen(Number(process.env.PORT));
+
+const dateGuesser = new DateGuesser().guess(
+  // "volgende week zondag",
+  "volgende week maandag",
+
+  // "4 januari om 3 uur",
+
+  // "over drie weken op donderdag om half 6",
+);

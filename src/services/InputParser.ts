@@ -7,7 +7,6 @@ export default class InputParser {
 
   private getTriggerRegex(input: string) {
     const regexString = input
-      .replaceAll(" ", "")
       .replaceAll("[", "(")
       .replaceAll("]", ")?")
       // eslint-disable-next-line max-len

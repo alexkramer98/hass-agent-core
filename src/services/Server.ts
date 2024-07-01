@@ -65,7 +65,12 @@ export default class Server {
 
     return {
       deviceId,
-      message: message.toLowerCase().replaceAll(/\W/gv, ""),
+
+      message: message
+        .toLowerCase()
+        .trim()
+        .replaceAll(/[^a-z0-9 ]+/gv, ""),
+
       messageId,
     };
   }
