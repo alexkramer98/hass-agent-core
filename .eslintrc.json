@@ -7,6 +7,10 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "no-duplicate-imports": "off",
+    "import/no-duplicates": "off",
+    "putout/putout": "off",
+    "perfectionist/sort-objects": "off",
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
     "@typescript-eslint/prefer-destructuring": "off",
     "@typescript-eslint/naming-convention": "off",
