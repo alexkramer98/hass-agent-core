@@ -2365,6 +2365,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:^3":
+  version: 3.4.2
+  resolution: "@types/luxon@npm:3.4.2"
+  checksum: 10c0/d835467de3daf7e17ba78b50bb5a14efd94272439ca067990d71332a54b311544459c69623eddd243b511b28d70194c9591a9ee8cf9c038962c965f991affd7e
+  languageName: node
+  linkType: hard
+
 "@types/mdast@npm:^3.0.0":
   version: 3.0.15
   resolution: "@types/mdast@npm:3.0.15"
@@ -6496,6 +6503,7 @@ __metadata:
   dependencies:
     "@evgenyorekhov/prettier-config": "npm:^1.2.0"
     "@types/express": "npm:^4.17.21"
+    "@types/luxon": "npm:^3"
     axios: "npm:^1.6.7"
     body-parser: "npm:^1.20.2"
     dayjs: "npm:^1.11.11"
@@ -6505,6 +6513,7 @@ __metadata:
     express: "npm:^4.18.2"
     express-async-handler: "npm:^1.2.0"
     glob: "npm:^10.3.10"
+    luxon: "npm:^3.4.4"
     patch-package: "npm:^8.0.0"
     prettier: "npm:^3.2.5"
     svelte: "npm:^4.2.12"
@@ -7569,6 +7578,13 @@ __metadata:
   dependencies:
     yallist: "npm:^4.0.0"
   checksum: 10c0/cb53e582785c48187d7a188d3379c181b5ca2a9c78d2bce3e7dee36f32761d1c42983da3fe12b55cb74e1779fa94cdc2e5367c028a9b35317184ede0c07a30a9
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.4.4":
+  version: 3.4.4
+  resolution: "luxon@npm:3.4.4"
+  checksum: 10c0/02e26a0b039c11fd5b75e1d734c8f0332c95510f6a514a9a0991023e43fb233884da02d7f966823ffb230632a733fc86d4a4b1e63c3fbe00058b8ee0f8c728af
   languageName: node
   linkType: hard
 
