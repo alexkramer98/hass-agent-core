@@ -569,8 +569,8 @@ export default class NewDateGuesser {
     if (
       input.includes("middag") ||
       input.includes("avond") ||
-      (!input.includes("nacht") && !input.includes("ochtend") && hours <= 8) ||
-      hours === 12
+      hours === 12 ||
+      (!input.includes("nacht") && !input.includes("ochtend") && hours <= 8)
     ) {
       hours += HALF_DAY;
     }
@@ -612,6 +612,8 @@ export default class NewDateGuesser {
       result?.weekday_d;
 
     let newDate = start.set({ hour: 0, minute: 0 });
+
+    // todo: onze hours en minutes leiden, maar alleen als deze gevonden worden. Anders fallback op absolute tijd
 
     newDate = newDate.plus({
       years,
