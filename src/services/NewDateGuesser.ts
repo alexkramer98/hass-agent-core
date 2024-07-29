@@ -365,6 +365,9 @@
 //     return undefined;
 //   }
 // }
+
+// todo: vanavond, vanmiddag, deze avond, straks, aanstaande ???
+
 import { DateTime } from "luxon";
 
 const FULL_HOUR = 60;
@@ -402,8 +405,13 @@ const ABSOLUTE_DATE_REGEX =
   /^(?:op )?(?<day>\d\d?) (?<month>april|augustus|december|februari|januari|juli|juni|maart|mei|november|oktober|september)(?: (?<year>\d{4}))?/v;
 
 const RELATIVE_DATE_REGEX =
-  /^(?:(?<weekday_d>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?)?(?:over|in|(?:op )?(?<weekday_a>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?) (?:(?<years>\d\d?) jaar)?(?: en |, | )?(?:(?<months>\d\d?) maand)?(?: ?(?:in|op) de (?<week>\d)e (?:week (?:van (?<month>april|augustus|februari|januari|juli|juni|maart|mei|novemberdecember|oktober|september))?)?(?:(?:op )?(?<weekday_b>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?)?)?(?: en |, | )?(?:(?<weeks>\d\d?) week(?: op ?(?<weekday_c>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?)?)?(?: en |, | )?(?:(?<days>\d\d?) dag)?(?: en |, | )?(?:(?<hours>\d\d?) uur)?(?: en |, | )?(?:(?<minutes>\d\d?) minuut)?(?: en |, | )?/v;
+  /^(?:(?<weekday_a>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?)?(?:over|in|(?:op )?(?<weekday_b>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?) ?(?:in|over)?(?:(?<years>\d\d?) jaar)?(?: en |, | )?(?:(?<months>\d\d?) maand)?(?: ?(?:in|op) de (?<week>\d)e (?:week (?:van (?<month>april|augustus|december|februari|januari|juli|juni|maart|mei|november|oktober|september))?)?(?:(?:op )?(?<weekday_c>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?)?)?(?: en |, | )?(?:(?<weeks>\d\d?) week(?: op ?(?<weekday_d>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?)?)?(?: en |, | )?(?:(?<days>\d\d?) dag)?(?: en |, | )?(?<!g )(?:(?<hours>\d\d?) uur)?(?: en |, | )?(?:(?<minutes>\d\d?) minuut)?(?: en |, | )?/v;
 
+// /^(?:(?<weekday_a>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?)?(?:over|in|(?:op )?(?<weekday_b>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?) ?(?:(?<years>\d\d?) jaar)?(?: en |, | )?(?:(?<months>\d\d?) maand)?(?: ?(?:in|op) de (?<week>\d)e (?:week (?:van (?<month>april|augustus|december|februari|januari|juli|juni|maart|mei|november|oktober|september))?)?(?:(?:op )?(?<weekday_c>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?)?)?(?: en |, | )?(?:(?<weeks>\d\d?) week(?: op ?(?<weekday_d>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag)(?: ?nacht|avond|middag|ochtend)? ?)?)?(?: en |, | )?(?:(?<days>\d\d?) dag)?(?: en |, | )?(?<!g )(?:(?<hours>\d\d?) uur)?(?: en |, | )?(?:(?<minutes>\d\d?) minuut)?(?: en |, | )?/v;
+
+// /^(?:(?<weekday_d>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?)?(?:over|in|(?:op )?(?<weekday_a>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?) ?(?:(?<years>\d\d?) jaar)?(?: en |, | )?(?:(?<months>\d\d?) maand)?(?: ?(?:in|op) de (?<week>\d)e (?:week (?:van (?<month>april|augustus|februari|januari|juli|juni|maart|mei|novemberdecember|oktober|september))?)?(?:(?:op )?(?<weekday_b>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?)?)?(?: en |, | )?(?:(?<weeks>\d\d?) week(?: op ?(?<weekday_c>dinsdag|donderdag|maandag|vrijdag|woensdag|zaterdag|zondag) ?)?)?(?: en |, | )?(?:(?<days>\d\d?) dag)?(?: en |, | )?(?<!g )(?:(?<hours>\d\d?) uur)?(?: en |, | )?(?:(?<minutes>\d\d?) minuut)?(?: en |, | )?/v;
+
+// todo: alle weekdays moeten ochtend/nacht/middag/avond met opt. spatie kunnen accepteren
 export default class NewDateGuesser {
   private normalizeInput(result: string): string {
     const replacements = {
@@ -451,17 +459,17 @@ export default class NewDateGuesser {
     return result;
   }
 
-  private splitInput(input: string) {
-    const regex =
-      /(?!$)(?:(?:avond|middag|nacht|ochtend) )?(?:om )?(?:\d\d? )?(?:(?:half|(?:kwart )?voor(?: half)?|(?:kwart )?over(?: half)?) )?(?:\d\d?)?(?:uur)?(?: in de (?:avond|middag|nacht|ochtend))?$/v;
-
-    const match = regex.exec(input);
-
-    return {
-      absoluteTime: match?.[0].trim(),
-      remainder: input.replace(match?.[0] ?? "", "") || undefined,
-    };
-  }
+  // private splitInput(input: string) {
+  //   const regex =
+  //     /(?!$)(?:(?:avond|middag|nacht|ochtend) )?(?:om )?(?:\d\d? )?(?:(?:half|(?:kwart )?voor(?: half)?|(?:kwart )?over(?: half)?) )?(?:\d\d?)?(?:uur)?(?: in de (?:avond|middag|nacht|ochtend))?$/v;
+  //
+  //   const match = regex.exec(input);
+  //
+  //   return {
+  //     absoluteTime: match?.[0].trim(),
+  //     remainder: input.replace(match?.[0] ?? "", "") || undefined,
+  //   };
+  // }
 
   private parseNumber(input?: string) {
     const number = Number(input);
@@ -471,115 +479,132 @@ export default class NewDateGuesser {
 
   private parseFullHour(input: string) {
     return {
-      hours: this.parseNumber(
-        /(?<hours>\d\d?) uur/v.exec(input)?.groups?.hours,
-      ),
+      hour: this.parseNumber(/(?<hour>\d\d?) uur/v.exec(input)?.groups?.hour),
 
-      minutes: 0,
+      minute: 0,
     };
   }
 
   private parseAfterHour(input: string) {
     const result =
-      /(?:(?<minutes>\d\d?)|kwart) over (?:half )?(?<hours>\d\d?)/v.exec(
+      /(?:(?<minute>\d\d?)|kwart) over (?:half )?(?<hour>\d\d?)/v.exec(
         input,
       )?.groups;
 
-    let hours = this.parseNumber(result?.hours);
-    let minutes = this.parseNumber(result?.minutes);
+    let hour = this.parseNumber(result?.hour);
+    let minute = this.parseNumber(result?.minute);
 
-    if (
-      minutes !== undefined &&
-      hours !== undefined &&
-      input.includes("half")
-    ) {
-      minutes += HALF_HOUR;
-      hours -= 1;
+    if (minute !== undefined && hour !== undefined && input.includes("half")) {
+      minute += HALF_HOUR;
+      hour -= 1;
     }
 
     if (input.includes("kwart")) {
-      minutes = QUARTER_HOUR;
+      minute = QUARTER_HOUR;
     }
 
-    return { hours, minutes };
+    return { hour, minute };
   }
 
   private parseBeforeHour(input: string) {
     const result =
-      /(?:(?<minutes>\d\d?)|kwart) voor (?:half )?(?<hours>\d\d?)/v.exec(
+      /(?:(?<minute>\d\d?)|kwart) voor (?:half )?(?<hour>\d\d?)/v.exec(
         input,
       )?.groups;
 
-    let hours = this.parseNumber(result?.hours);
-    let minutes = this.parseNumber(result?.minutes);
+    let hour = this.parseNumber(result?.hour);
+    let minute = this.parseNumber(result?.minute);
 
-    if (hours !== undefined) {
-      hours -= 1;
+    if (hour !== undefined) {
+      hour -= 1;
     }
 
-    if (minutes !== undefined) {
-      minutes = FULL_HOUR - minutes;
+    if (minute !== undefined) {
+      minute = FULL_HOUR - minute;
 
       if (input.includes("half")) {
-        minutes -= HALF_HOUR;
+        minute -= HALF_HOUR;
       }
     }
 
     if (input.includes("kwart")) {
-      minutes = FULL_HOUR - QUARTER_HOUR;
+      minute = FULL_HOUR - QUARTER_HOUR;
     }
 
-    return { hours, minutes };
+    return { hour, minute };
   }
 
   private parseHalfHour(input: string) {
-    const result = /half (?<hours>\d\d?)/v.exec(input)?.groups;
+    const result = /half (?<hour>\d\d?)/v.exec(input)?.groups;
 
-    let hours = this.parseNumber(result?.hours);
+    let hour = this.parseNumber(result?.hour);
 
-    if (hours !== undefined) {
-      hours -= 1;
+    if (hour !== undefined) {
+      hour -= 1;
     }
 
-    return { hours, minutes: HALF_HOUR };
+    return { hour, minute: HALF_HOUR };
   }
 
-  private parseAbsoluteTime(start: DateTime, input: string) {
-    let hours = undefined;
-    let minutes = undefined;
+  private parseAbsoluteTime(start: DateTime, input: string): DateTime {
+    let hour = undefined;
+    let minute = undefined;
 
     if (input.includes("uur")) {
-      ({ hours, minutes } = this.parseFullHour(input));
+      ({ hour, minute } = this.parseFullHour(input));
     } else if (input.includes("over")) {
-      ({ hours, minutes } = this.parseAfterHour(input));
+      ({ hour, minute } = this.parseAfterHour(input));
     } else if (input.includes("voor")) {
-      ({ hours, minutes } = this.parseBeforeHour(input));
+      ({ hour, minute } = this.parseBeforeHour(input));
     } else if (input.includes("half")) {
-      ({ hours, minutes } = this.parseHalfHour(input));
+      ({ hour, minute } = this.parseHalfHour(input));
     }
 
-    if (hours === undefined) {
-      hours = 0;
-    }
-
-    if (minutes === undefined) {
-      minutes = 0;
-    }
-
-    if (
-      input.includes("middag") ||
-      input.includes("avond") ||
-      hours === 12 ||
-      (!input.includes("nacht") && !input.includes("ochtend") && hours <= 8)
+    if (hour === undefined) {
+      if (input.includes("nacht")) {
+        hour = 3;
+      } else if (input.includes("ochtend")) {
+        hour = 9;
+      } else if (input.includes("middag")) {
+        hour = 13;
+      } else if (input.includes("avond")) {
+        hour = 19;
+      }
+    } else if (
+      hour === 12 &&
+      ["nacht", "avond"].some((item) => input.includes(item))
     ) {
-      hours += HALF_DAY;
+      hour = 0;
+    } else if (
+      hour >= 1 &&
+      hour <= 5 &&
+      !["nacht", "ochtend"].some((item) => input.includes(item))
+    ) {
+      hour += HALF_DAY;
+    } else if (hour >= 6 && hour <= 8 && !input.includes("ochtend")) {
+      hour += HALF_DAY;
+    } else if (hour >= 9 && hour <= 11 && input.includes("avond")) {
+      hour += HALF_DAY;
     }
 
-    if (hours >= FULL_DAY) {
-      hours = 0;
+    let second = undefined;
+    let millisecond = undefined;
+
+    if (hour !== undefined || minute !== undefined) {
+      second = 0;
+      millisecond = 0;
+
+      if (hour !== undefined) {
+        minute ??= 0;
+      }
     }
 
-    return start.set({ hour: hours, minute: minutes });
+    return start.set({
+      hour,
+      minute,
+      second,
+      millisecond,
+    });
   }
 
   private parseAbsoluteDate(start: DateTime, input: string) {
@@ -611,9 +636,7 @@ export default class NewDateGuesser {
       result?.weekday_c ??
       result?.weekday_d;
 
-    let newDate = start.set({ hour: 0, minute: 0 });
-
-    // todo: onze hours en minutes leiden, maar alleen als deze gevonden worden. Anders fallback op absolute tijd
+    let newDate = start;
 
     newDate = newDate.plus({
       years,
@@ -629,13 +652,29 @@ export default class NewDateGuesser {
     }
 
     if (week !== undefined) {
-      newDate = newDate.startOf("month").plus({ weeks: week - 1 });
+      newDate = newDate
+        .startOf("month")
+        .plus({ weeks: week - 1 })
+        .set({
+          hour: newDate.hour,
+          minute: newDate.minute,
+          second: newDate.second,
+          millisecond: newDate.millisecond,
+        });
     }
 
     if (weekday !== undefined) {
-      newDate = newDate.startOf("week").plus({
-        days: DAYS.indexOf(weekday),
-      });
+      newDate = newDate
+        .startOf("week")
+        .plus({
+          days: DAYS.indexOf(weekday),
+        })
+        .set({
+          hour: newDate.hour,
+          minute: newDate.minute,
+          second: newDate.second,
+          millisecond: newDate.millisecond,
+        });
     }
 
     return newDate;
@@ -644,26 +683,41 @@ export default class NewDateGuesser {
   public guess(input: string): DateTime | undefined {
     const normalizedInput = this.normalizeInput(input);
 
+    // todo: current datetime
     const start = DateTime.fromObject({
       year: 2000,
       month: 1,
       day: 1,
-      hour: 0,
-      minute: 0,
-      second: 0,
+      hour: 15,
+      minute: 36,
+      second: 22,
+      millisecond: 611,
     });
 
-    const { absoluteTime, remainder } = this.splitInput(normalizedInput);
-    const time = this.parseAbsoluteTime(start, normalizedInput);
+    // const { absoluteTime, remainder } = this.splitInput(normalizedInput);
+
+    let newDateTime = undefined;
+
+    // todo: pak langste match van datumfunctie en assume dat dat de juiste is
+
+    //   todo: over 2 weken op dinsdag => dinsdag 13:00 ipv bestaande tijd
 
     if (ABSOLUTE_DATE_REGEX.test(normalizedInput)) {
-      return this.parseAbsoluteDate(time, normalizedInput);
+      newDateTime = this.parseAbsoluteDate(start, normalizedInput);
+    } else if (RELATIVE_DATE_REGEX.test(normalizedInput)) {
+      newDateTime = this.parseRelativeDate(start, normalizedInput);
+    } else {
+      return undefined;
     }
 
-    if (RELATIVE_DATE_REGEX.test(normalizedInput)) {
-      return this.parseRelativeDate(time, normalizedInput);
+    // time was not altered relative to the start, so assume absolute time
+    if (
+      start.hour === newDateTime.hour &&
+      start.minute === newDateTime.minute
+    ) {
+      newDateTime = this.parseAbsoluteTime(newDateTime, normalizedInput);
     }
 
-    return undefined;
+    return newDateTime;
   }
 }
