@@ -27,6 +27,18 @@ const guesser = new NewDateGuesser();
 const getDate = (): DateTime => DateTime.local(2000, 1, 1, 15, 36, 22, 611);
 
 const tests = {
+  "om 4 uur": getDate().set({
+    hour: 16,
+  }),
+
+  "om 10 uur": getDate().set({
+    hour: 10,
+  }),
+
+  "om 6 uur": getDate().set({
+    hour: 18,
+  }),
+
   "4 februari om half 4": getDate().set({
     day: 4,
     month: 2,
@@ -316,6 +328,10 @@ const tests = {
     year: 2003,
     day: 11,
     month: 3,
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
   }),
 
   "over 2 weken op woensdag om 4 uur": getDate().set({
@@ -380,13 +396,13 @@ const tests = {
       years: 2,
       months: 8,
     })
-    .set({ day: 22 }),
+    .set({ day: 22, hour: 13, minute: 0, second: 0, millisecond: 0 }),
 
   "in 2 jaar op de derde woensdag": getDate()
     .plus({
       years: 2,
     })
-    .set({ day: 16 }),
+    .set({ day: 16, hour: 13, minute: 0, second: 0, millisecond: 0 }),
 
   "op de tweede vrijdag van maart": getDate().set({ day: 10, month: 3 }),
   "de eerste zondag van april": getDate().set({ day: 10, month: 3 }),
