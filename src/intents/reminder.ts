@@ -4,14 +4,14 @@ import type {
   IntentResponse,
 } from "../interfaces";
 import { defineIntent, reply } from "../interfaces";
-import DateGuesser from "../services/DateGuesser";
+import OldDateGuesser from "../services/OldDateGuesser";
 
 const handler = (
   context: IntentHandlerContext,
   variables: IntentHandlerVariables,
 ): IntentResponse => {
   //   eslint-disable-next-line putout/putout
-  console.log(variables, new DateGuesser().guess(variables.when));
+  console.log(variables, new OldDateGuesser().guess(variables.when));
 
   return reply("yo");
 };

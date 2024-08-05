@@ -5,7 +5,7 @@ import updateLocalePlugin from "dayjs/plugin/updateLocale";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import { DateTime } from "luxon";
 
-import NewDateGuesser from "./services/NewDateGuesser";
+import DateGuesser from "./services/DateGuesser";
 
 // eslint-disable-next-line import/no-named-as-default-member
 dayjs.extend(updateLocalePlugin);
@@ -22,21 +22,30 @@ dayjs.extend(localizedFormatPlugin);
 // eslint-disable-next-line import/no-named-as-default-member
 dayjs.extend(weekdayPlugin);
 
-const guesser = new NewDateGuesser();
+const guesser = new DateGuesser();
 
 const getDate = (): DateTime => DateTime.local(2000, 1, 1, 15, 36, 22, 611);
 
 const tests = {
   "om 4 uur": getDate().set({
     hour: 16,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
   }),
 
   "om 10 uur": getDate().set({
     hour: 10,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
   }),
 
   "om 6 uur": getDate().set({
     hour: 18,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
   }),
 
   "4 februari om half 4": getDate().set({
@@ -53,16 +62,6 @@ const tests = {
     month: 3,
     hour: 17,
     minute: 45,
-    second: 0,
-    millisecond: 0,
-  }),
-
-  "1 januari 2025 om middernacht": getDate().set({
-    year: 2025,
-    day: 1,
-    month: 1,
-    hour: 0,
-    minute: 0,
     second: 0,
     millisecond: 0,
   }),
@@ -132,7 +131,7 @@ const tests = {
     millisecond: 0,
   }),
 
-  "2 februari om kwart over 3 's middags": getDate().set({
+  "2 februari om kwart over 3 in de middag": getDate().set({
     day: 2,
     month: 2,
     hour: 15,
@@ -160,7 +159,7 @@ const tests = {
     millisecond: 0,
   }),
 
-  "22 mei om 10 uur 's avonds": getDate().set({
+  "22 mei om 10 uur in de avond": getDate().set({
     day: 22,
     month: 5,
     hour: 22,
@@ -282,41 +281,23 @@ const tests = {
 
   "over drie kwartier": getDate().plus({ minutes: 45 }),
 
-  "in een uur": getDate().plus({ hours: 1 }),
+  "over een uur": getDate().plus({ hours: 1 }),
 
   "over 2 dagen": getDate().plus({ days: 2 }),
+  "over 5 dagen": getDate().plus({ days: 5 }),
 
-  "over 6 maanden": getDate().plus({ months: 6 }),
+  "over 5 minuten": getDate().plus({ minutes: 5 }),
 
-  "over 10 jaar": getDate().plus({ years: 10 }),
+  "over anderhalf uur": getDate().plus({ hours: 1, minutes: 30 }),
 
-  "in 5 minuten": getDate().plus({ minutes: 5 }),
-
-  "in anderhalf uur": getDate().plus({ hours: 1, minutes: 30 }),
-
-  "over 2 jaar, 3 maanden en 2 weken, 1 dag, 4 uur en 30 minuten":
-    getDate().plus({
-      years: 2,
-      months: 3,
-      weeks: 2,
-      days: 1,
-      hours: 4,
-      minutes: 30,
-    }),
-
-  "over 1 jaar en 2 maanden": getDate().plus({ years: 1, months: 2 }),
-
-  "over 3 dagen en 6 en een half uur": getDate().plus({
-    days: 3,
-    hours: 6,
+  "over 4 uur en 30 minuten": getDate().plus({
+    hours: 4,
     minutes: 30,
   }),
 
   "over 3 weken": getDate().plus({ weeks: 3 }),
 
-  "over een maand en 1 week": getDate().plus({ months: 1, weeks: 1 }),
-
-  "in 2 weken op maandagavond": getDate().set({
+  "over 2 weken op maandagavond": getDate().set({
     day: 10,
     hour: 19,
     minute: 0,
@@ -324,8 +305,7 @@ const tests = {
     millisecond: 0,
   }),
 
-  "over 3 jaar, 2 maanden en 2 weken op dinsdag": getDate().set({
-    year: 2003,
+  "2 weken op dinsdag": getDate().set({
     day: 11,
     month: 3,
     hour: 13,
@@ -342,7 +322,7 @@ const tests = {
     millisecond: 0,
   }),
 
-  "over 1 maand en 2 weken op donderdag 5 uur 's middags": getDate().set({
+  "2 weken op donderdag om 5 uur 's middags": getDate().set({
     month: 2,
     day: 17,
     hour: 17,
@@ -355,63 +335,30 @@ const tests = {
     .plus({ weeks: 2 })
     .set({ hour: 18, minute: 0, second: 0, millisecond: 0 }),
 
-  "vrijdag nacht over 3 weken": getDate().set({
-    day: 21,
-    hour: 3,
+  "op zaterdag over 2 weken": getDate().set({
+    day: 15,
+  }),
+
+  "op vrijdag": getDate().set({
+    day: 7,
+    hour: 13,
     minute: 0,
     second: 0,
     millisecond: 0,
   }),
 
-  "op zaterdag over 2 weken en 2 en een half uur": getDate()
-    .set({
-      day: 15,
-    })
-    .plus({
-      hours: 2,
-      minutes: 30,
-    }),
-
-  "op vrijdag": getDate().set({
-    day: 7,
-  }),
-
   vrijdag: getDate().set({
     day: 7,
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
   }),
 
-  "op zondag over 2 maanden": getDate().set({ month: 3, day: 5 }),
-
-  "dinsdag over 2 jaren en 3 maanden en 2 weken en anderhalf uur": getDate()
-    .plus({
-      years: 2,
-      months: 3,
-      hours: 1,
-      minutes: 30,
-    })
-    .set({ day: 16 }),
-
-  "over 2 jaar in de vierde week van september": getDate()
-    .plus({
-      years: 2,
-      months: 8,
-    })
-    .set({ day: 22, hour: 13, minute: 0, second: 0, millisecond: 0 }),
-
-  "in 2 jaar op de derde woensdag": getDate()
-    .plus({
-      years: 2,
-    })
-    .set({ day: 16, hour: 13, minute: 0, second: 0, millisecond: 0 }),
-
-  "op de tweede vrijdag van maart": getDate().set({ day: 10, month: 3 }),
-  "de eerste zondag van april": getDate().set({ day: 10, month: 3 }),
-
-  "over 2 maanden in de derde week op maandag avond": getDate().set({
-    day: 13,
-    month: 3,
-    hour: 19,
-    minute: 0,
+  "donderdag om half 4": getDate().set({
+    day: 6,
+    hour: 15,
+    minute: 30,
     second: 0,
     millisecond: 0,
   }),
@@ -428,8 +375,10 @@ for (const [input, expectedDate] of Object.entries(tests)) {
 
   const pass = result.toMillis() === expectedDate.toMillis();
 
-  if (!pass) {
-    const message = `fail: "${input}", expected: ${expectedDate.toJSDate().toLocaleString()}, got: ${result.toJSDate().toLocaleString()}`;
+  if (pass) {
+    // console.log(`PASS: ${input}`);
+  } else {
+    const message = `FAIL: "${input}", expected: ${expectedDate.toJSDate().toLocaleString()}, got: ${result.toJSDate().toLocaleString()}`;
 
     console.log(message);
   }

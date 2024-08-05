@@ -1,34 +1,35 @@
-import "dayjs/locale/nl";
+import { DateTime } from "luxon";
 
-import dayjs from "dayjs";
-import localizedFormatPlugin from "dayjs/plugin/localizedFormat";
-import updateLocalePlugin from "dayjs/plugin/updateLocale";
-import weekdayPlugin from "dayjs/plugin/weekday";
+const ABSOLUTE_DATE_REGEX =
+  /^(?:op )?(?<day>\d\d?) (?<month>april|augustus|december|februari|januari|juli|juni|maart|mei|november|oktober|september)(?: (?<year>\d{4}))?/v;
 
-dayjs.extend(updateLocalePlugin);
+const MONTHS = [
+  "januari",
+  "februari",
+  "maart",
+  "april",
+  "mei",
+  "juni",
+  "juli",
+  "augustus",
+  "september",
+  "oktober",
+  "november",
+  "december",
+];
 
-dayjs.locale("nl");
-dayjs.updateLocale("nl", {
-  weekStart: 1,
-});
-dayjs.extend(localizedFormatPlugin);
-dayjs.extend(weekdayPlugin);
+const DAYS = [
+  "maandag",
+  "dinsdag",
+  "woensdag",
+  "donderdag",
+  "vrijdag",
+  "zaterdag",
+  "zondag",
+];
 
 export default class DateGuesser {
-  private findAndReplace(
-    result: string,
-    replacements: {
-      [key: string]: string;
-    },
-  ) {
-    Object.entries(replacements).forEach(([search, replace]) => {
-      result = result.replace(search, replace);
-    });
-
-    return result;
-  }
-
-  private normalizeNumbers(input: string) {
+  private normalizeInput(result: string): string {
     const replacements = {
       een: "1",
       één: "1",
@@ -40,19 +41,17 @@ export default class DateGuesser {
       zeven: "7",
       acht: "8",
       negen: "9",
-    };
-
-    return this.findAndReplace(input, replacements);
-  }
-
-  private normalizeRelative(input: string) {
-    const result = this.normalizeNumbers(input);
-
-    const replacements = {
+      tien: "10",
+      "'s n8s": "in de nacht",
+      n8: "nacht",
+      "'s ochtends": "in de ochtend",
+      "'s middags": "in de middag",
+      "'s avonds": "in de avond",
       "en 1 half uur": "uur en 30 minuten",
       "1 half uur": "30 minuten",
       "anderhalf uur": "1 uur en 30 minuten",
       "3 kwartier": "45 minuten",
+      "1 kwartier": "15 minuten",
       kwartier: "15 minuten",
       "half uur": "30 minuten",
       minuten: "minuut",
@@ -60,121 +59,209 @@ export default class DateGuesser {
       uurtje: "uur",
       dagen: "dag",
       weken: "week",
-      maanden: "maand",
-      jaren: "jaar",
     };
 
-    return this.findAndReplace(result, replacements);
-  }
-
-  private parseRelative(input: string) {
-    const normalizedInput = this.normalizeRelative(input);
-    const regex = // eslint-disable-next-line max-len,regexp/no-super-linear-move,sonar/unused-named-groups
-      /(?<years>\d+) jaar|(?<months>\d+) maand|(?<weeks>\d+) week|(?<days>\d+) dag|(?<hours>\d+) uur|(?<minutes>\d+) minuut/gv;
-
-    const groups = ["years", "months", "weeks", "days", "hours", "minutes"];
-
-    let match = undefined;
-    let result = dayjs();
-
-    // eslint-disable-next-line no-cond-assign
-    while ((match = regex.exec(normalizedInput)) !== null) {
-      for (const group of groups) {
-        if (match.groups?.[group] !== undefined) {
-          // @ts-expect-error - exists
-          result = result.add(Number(match.groups[group]), group);
-        }
-      }
+    for (const [search, replace] of Object.entries(replacements)) {
+      result = result.replace(search, replace);
     }
 
-    // todo: op/om (over 3 weken op maandag om 3 uur)
     return result;
   }
 
-  private parseAbsolute(input: string) {
-    let date = dayjs().set("hours", 0).set("minutes", 0).set("seconds", 0);
+  private parseNumber(input?: string) {
+    const number = Number(input);
 
-    // const normalizedInput = this.normalizeNumbers(input);
-    // const regex =
-    //   // eslint-disable-next-line max-len
-    //   // eslint-disable-next-line security/detect-unsafe-regex,regexp/no-super-linear-move,sonar/unused-named-groups,max-len
-    //   /(?<day>\d+) (?<month>april|augustus|december|februari|januari|juli|juni|maart|mei|november|oktober|september) ?(?<year>\d+)?/gv;
-    //
-    // let match = undefined;
-    //
-    // const matches: { day?: string; month?: string; year?: string } = {};
-    // const groups = ["day", "month", "year"];
-    //
-    // // eslint-disable-next-line no-cond-assign
-    // while ((match = regex.exec(normalizedInput)) !== null) {
-    //   for (const group of groups) {
-    //     if (match.groups?.[group] !== undefined) {
-    //       // @ts-expect-error - exists
-    //       matches[group] = match.groups[group];
-    //     }
-    //   }
-    // }
-    //
-    // // todo: is datum valid? Wanneer afbreken?
-    // //   todo: 15.30 en 15:30 komen nu niet goed mee, maar zin mag niet eindigen met .
-    //   todo: tijd bepalen, sharen met bovenstaande functie
-    const weekdays = [
-      "maandag",
-      "dinsdag",
-      "woensdag",
-      "donderdag",
-      "vrijdag",
-      "zaterdag",
-      "zondag",
-    ];
-
-    for (const [index, weekday] of weekdays.entries()) {
-      if (input.includes(weekday)) {
-        if (!input.includes("volgende week") && index < date.day() - 1) {
-          date = date.add(1, "weeks");
-        }
-
-        date = date.weekday(index);
-
-        break;
-      }
-    }
-
-    if (input.includes("volgend jaar")) {
-      date = date.add(1, "years").set("months", 0).set("date", 1);
-    } else if (input.includes("volgende maand")) {
-      date = date.add(1, "months").set("date", 1);
-    } else if (input.includes("volgende week")) {
-      date = date.add(1, "weeks");
-
-      if (!weekdays.some((weekday) => input.includes(weekday))) {
-        date = date.weekday(0);
-      }
-    } else if (input.includes("overmorgen")) {
-      date = date.add(2, "days");
-    } else if (input.includes("morgen")) {
-      date = date.add(1, "days");
-
-      if (input.includes("morgenmiddag")) {
-        date = date.add(12, "hours");
-      } else if (input.includes("morgenavond")) {
-        date = date.add(18, "hours");
-      }
-    }
-
-    return date;
+    return Number.isNaN(number) ? undefined : number;
   }
 
-  public guess(input: string): Date | undefined {
-    if (["over ", "in "].some((condition) => input.includes(condition))) {
-      console.log("REL", this.parseRelative(input).format("L LT"));
+  private parseFullHour(input: string) {
+    return {
+      hour: this.parseNumber(/(?<hour>\d\d?) uur/v.exec(input)?.groups?.hour),
 
-      return this.parseRelative(input).toDate();
+      minute: 0,
+    };
+  }
+
+  private parseAfterHour(input: string) {
+    const result =
+      /(?:(?<minute>\d\d?)|kwart) over (?:half )?(?<hour>\d\d?)/v.exec(
+        input,
+      )?.groups;
+
+    let hour = this.parseNumber(result?.hour);
+    let minute = this.parseNumber(result?.minute);
+
+    if (minute !== undefined && hour !== undefined && input.includes("half")) {
+      minute += 30;
+      hour -= 1;
     }
 
-    // todo: match NUM MND NUM -> losse parsefunctie
-    console.log("ABS", this.parseAbsolute(input).format("L LT"));
+    if (input.includes("kwart")) {
+      minute = 15;
+    }
 
-    return this.parseAbsolute(input);
+    return { hour, minute };
+  }
+
+  private parseBeforeHour(input: string) {
+    const result =
+      /(?:(?<minute>\d\d?)|kwart) voor (?:half )?(?<hour>\d\d?)/v.exec(
+        input,
+      )?.groups;
+
+    let hour = this.parseNumber(result?.hour);
+    let minute = this.parseNumber(result?.minute);
+
+    if (hour !== undefined) {
+      hour -= 1;
+    }
+
+    if (minute !== undefined) {
+      minute = 60 - minute;
+
+      if (input.includes("half")) {
+        minute -= 30;
+      }
+    }
+
+    if (input.includes("kwart")) {
+      minute = 45;
+    }
+
+    return { hour, minute };
+  }
+
+  private parseHalfHour(input: string) {
+    const result = /half (?<hour>\d\d?)/v.exec(input)?.groups;
+
+    let hour = this.parseNumber(result?.hour);
+
+    if (hour !== undefined) {
+      hour -= 1;
+    }
+
+    return { hour, minute: 30 };
+  }
+
+  private parseAbsoluteTime(start: DateTime, input: string): DateTime {
+    let hour = undefined;
+    let minute = undefined;
+
+    if (input.includes("uur")) {
+      ({ hour, minute } = this.parseFullHour(input));
+    } else if (input.includes("over")) {
+      ({ hour, minute } = this.parseAfterHour(input));
+    } else if (input.includes("voor")) {
+      ({ hour, minute } = this.parseBeforeHour(input));
+    } else if (input.includes("half")) {
+      ({ hour, minute } = this.parseHalfHour(input));
+    }
+
+    if (hour === undefined) {
+      if (input.includes("nacht")) {
+        hour = 3;
+      } else if (input.includes("ochtend")) {
+        hour = 9;
+      } else if (input.includes("middag")) {
+        hour = 13;
+      } else if (input.includes("avond")) {
+        hour = 19;
+      } else {
+        hour = 13;
+      }
+    } else if (
+      hour === 12 &&
+      ["nacht", "avond"].some((item) => input.includes(item))
+    ) {
+      hour = 0;
+    } else if (
+      hour >= 1 &&
+      hour <= 5 &&
+      !["nacht", "ochtend"].some((item) => input.includes(item))
+    ) {
+      hour += 12;
+    } else if (hour >= 6 && hour <= 8 && !input.includes("ochtend")) {
+      hour += 12;
+    } else if (hour >= 9 && hour <= 11 && input.includes("avond")) {
+      hour += 12;
+    }
+
+    minute ??= 0;
+
+    return start.set({
+      hour,
+      minute,
+      second: 0,
+      millisecond: 0,
+    });
+  }
+
+  private parseAbsoluteDate(start: DateTime, input: string): DateTime {
+    const matches = ABSOLUTE_DATE_REGEX.exec(input)?.groups;
+    const day = this.parseNumber(matches?.day);
+    const year = this.parseNumber(matches?.year);
+    const month = matches?.month;
+
+    return start.set({
+      day,
+      month: month === undefined ? undefined : MONTHS.indexOf(month) + 1,
+      year,
+    });
+  }
+
+  private parseRelativeHoursMinutes(start: DateTime, input: string): DateTime {
+    const hourMatches = /(?<value>\d\d?) uur/v.exec(input)?.groups;
+    const minutesMatches = /(?<value>\d\d?) minuut/v.exec(input)?.groups;
+
+    return start.plus({
+      hour: this.parseNumber(hourMatches?.value),
+      minute: this.parseNumber(minutesMatches?.value),
+    });
+  }
+
+  private parseRelativeDays(start: DateTime, input: string): DateTime {
+    const matches = /(?<days>\d\d?) dag/v.exec(input)?.groups;
+
+    return start.plus({
+      day: this.parseNumber(matches?.days),
+    });
+  }
+
+  public guess(input: string): DateTime | undefined {
+    const normalizedInput = this.normalizeInput(input);
+
+    // todo: current datetime
+    const start = DateTime.fromObject({
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 15,
+      minute: 36,
+      second: 22,
+      millisecond: 611,
+    });
+
+    let result = start;
+
+    if (normalizedInput.startsWith("over ")) {
+      if (
+        normalizedInput.includes(" uur") ||
+        normalizedInput.includes(" minuut")
+      ) {
+        result = this.parseRelativeHoursMinutes(start, normalizedInput);
+      } else if (normalizedInput.includes(" dag")) {
+        result = this.parseRelativeDays(start, normalizedInput);
+      } else if (normalizedInput.includes(" week")) {
+        // todo: handle weken + dag + dagdeel
+      }
+    } else if (ABSOLUTE_DATE_REGEX.test(normalizedInput)) {
+      result = this.parseAbsoluteDate(start, normalizedInput);
+    }
+
+    if (normalizedInput.includes("om ")) {
+      return this.parseAbsoluteTime(result, normalizedInput);
+    }
+
+    return result;
   }
 }
