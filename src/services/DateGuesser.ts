@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+
 import { DateTime } from "luxon";
 
 const ABSOLUTE_DATE_REGEX =
@@ -27,6 +29,8 @@ const DAYS = [
   "zaterdag",
   "zondag",
 ];
+
+const DAY_PARTS = ["nacht", "ochtend", "middag", "avond"];
 
 export default class DateGuesser {
   private normalizeInput(result: string): string {
@@ -202,11 +206,13 @@ export default class DateGuesser {
     const year = this.parseNumber(matches?.year);
     const month = matches?.month;
 
-    return start.set({
+    const result = start.set({
       day,
       month: month === undefined ? undefined : MONTHS.indexOf(month) + 1,
       year,
     });
+
+    return this.parseAbsoluteTime(result, input);
   }
 
   private parseRelativeHoursMinutes(start: DateTime, input: string): DateTime {
@@ -222,13 +228,66 @@ export default class DateGuesser {
   private parseRelativeDays(start: DateTime, input: string): DateTime {
     const matches = /(?<days>\d\d?) dag/v.exec(input)?.groups;
 
-    return start.plus({
+    const result = start.plus({
       day: this.parseNumber(matches?.days),
     });
+
+    if (input.includes(" om ")) {
+      return this.parseAbsoluteTime(result, input);
+    }
+
+    return result;
   }
 
-  public guess(input: string): DateTime | undefined {
-    const normalizedInput = this.normalizeInput(input);
+  private parseRelativeWeeks(start: DateTime, input: string): DateTime {
+    const matches = /(?<weeks>\d\d?) week/v.exec(input)?.groups;
+    const weekdayIndex = DAYS.findIndex((day) => input.includes(day));
+
+    let result = start.plus({
+      weeks: this.parseNumber(matches?.weeks),
+    });
+
+    if (weekdayIndex !== -1) {
+      result = result.set({
+        // @ts-expect-error will always be in range
+        weekday: weekdayIndex + 1,
+      });
+
+      return this.parseAbsoluteTime(result, input);
+    }
+
+    if (input.includes(" om ")) {
+      return this.parseAbsoluteTime(result, input);
+    }
+
+    return result;
+  }
+
+  private parseAbsoluteDay(start: DateTime, input: string): DateTime {
+    const weekdayIndex = DAYS.findIndex((day) => input.includes(day));
+    const newIndex =
+      weekdayIndex + 1 < start.weekday ? weekdayIndex + 8 : weekdayIndex + 1;
+
+    const result = start.set({
+      // @ts-expect-error will always be in range
+      weekday: newIndex,
+    });
+
+    return this.parseAbsoluteTime(result, input);
+  }
+
+  private parseTomorrowish(start: DateTime, input: string): DateTime {
+    const delta = input.startsWith("over") ? 2 : 1;
+
+    const result = start.plus({
+      day: delta,
+    });
+
+    return this.parseAbsoluteTime(result, input);
+  }
+
+  public guess(rawInput: string): DateTime | undefined {
+    const input = this.normalizeInput(rawInput);
 
     // todo: current datetime
     const start = DateTime.fromObject({
@@ -241,27 +300,36 @@ export default class DateGuesser {
       millisecond: 611,
     });
 
-    let result = start;
+    if (ABSOLUTE_DATE_REGEX.test(input)) {
+      return this.parseAbsoluteDate(start, input);
+    }
 
-    if (normalizedInput.startsWith("over ")) {
-      if (
-        normalizedInput.includes(" uur") ||
-        normalizedInput.includes(" minuut")
-      ) {
-        result = this.parseRelativeHoursMinutes(start, normalizedInput);
-      } else if (normalizedInput.includes(" dag")) {
-        result = this.parseRelativeDays(start, normalizedInput);
-      } else if (normalizedInput.includes(" week")) {
-        // todo: handle weken + dag + dagdeel
+    if (/^(?:deze |van)(?:avond|middag|nacht|ochtend)/v.test(input)) {
+      return this.parseAbsoluteTime(start, input);
+    }
+
+    if (/^(?:over)?morgen/v.test(input)) {
+      return this.parseTomorrowish(start, input);
+    }
+
+    if (input.includes("over ")) {
+      if (input.includes(" week")) {
+        return this.parseRelativeWeeks(start, input);
       }
-    } else if (ABSOLUTE_DATE_REGEX.test(normalizedInput)) {
-      result = this.parseAbsoluteDate(start, normalizedInput);
+
+      if (input.includes(" dag")) {
+        return this.parseRelativeDays(start, input);
+      }
+
+      if (input.includes(" uur") || input.includes(" minuut")) {
+        return this.parseRelativeHoursMinutes(start, input);
+      }
     }
 
-    if (normalizedInput.includes("om ")) {
-      return this.parseAbsoluteTime(result, normalizedInput);
+    if (DAYS.some((item) => input.includes(item))) {
+      return this.parseAbsoluteDay(start, input);
     }
 
-    return result;
+    return this.parseAbsoluteTime(start, input);
   }
 }

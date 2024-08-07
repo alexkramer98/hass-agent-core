@@ -159,7 +159,7 @@ const tests = {
     millisecond: 0,
   }),
 
-  "22 mei om 10 uur in de avond": getDate().set({
+  "op 22 mei om 10 uur in de avond": getDate().set({
     day: 22,
     month: 5,
     hour: 22,
@@ -177,7 +177,7 @@ const tests = {
     millisecond: 0,
   }),
 
-  "19 juni om zeven voor half 9 in de ochtend": getDate().set({
+  "op 19 juni om zeven voor half 9 in de ochtend": getDate().set({
     day: 19,
     month: 6,
     hour: 8,
@@ -284,7 +284,10 @@ const tests = {
   "over een uur": getDate().plus({ hours: 1 }),
 
   "over 2 dagen": getDate().plus({ days: 2 }),
-  "over 5 dagen": getDate().plus({ days: 5 }),
+
+  "over 5 dagen om 4 uur": getDate()
+    .plus({ days: 5 })
+    .set({ hours: 16, minute: 0, second: 0, millisecond: 0 }),
 
   "over 5 minuten": getDate().plus({ minutes: 5 }),
 
@@ -305,9 +308,8 @@ const tests = {
     millisecond: 0,
   }),
 
-  "2 weken op dinsdag": getDate().set({
+  "over 2 weken op dinsdag": getDate().set({
     day: 11,
-    month: 3,
     hour: 13,
     minute: 0,
     second: 0,
@@ -322,9 +324,9 @@ const tests = {
     millisecond: 0,
   }),
 
-  "2 weken op donderdag om 5 uur 's middags": getDate().set({
-    month: 2,
-    day: 17,
+  "over 2 weken op donderdag om 5 uur 's middags": getDate().set({
+    month: 1,
+    day: 13,
     hour: 17,
     minute: 0,
     second: 0,
@@ -335,12 +337,40 @@ const tests = {
     .plus({ weeks: 2 })
     .set({ hour: 18, minute: 0, second: 0, millisecond: 0 }),
 
+  "op zaterdagmiddag over 2 weken": getDate().set({
+    day: 15,
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
   "op zaterdag over 2 weken": getDate().set({
     day: 15,
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "op zaterdagavond over 3 weken": getDate().set({
+    day: 22,
+    hour: 19,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
   }),
 
   "op vrijdag": getDate().set({
     day: 7,
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "op zondag": getDate().set({
+    day: 2,
     hour: 13,
     minute: 0,
     second: 0,
@@ -362,6 +392,85 @@ const tests = {
     second: 0,
     millisecond: 0,
   }),
+
+  vanavond: getDate().set({
+    hour: 19,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "deze middag": getDate().set({
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "deze nacht om 3 uur": getDate().set({
+    hour: 3,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "vandaag om 3 uur": getDate().set({
+    hour: 15,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "vandaag om 3 uur in de nacht": getDate().set({
+    hour: 3,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  morgen: getDate()
+    .plus({
+      day: 1,
+    })
+    .set({
+      hour: 13,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    }),
+
+  "morgen avond": getDate()
+    .plus({
+      day: 1,
+    })
+    .set({
+      hour: 19,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    }),
+
+  overmorgennacht: getDate()
+    .plus({
+      day: 2,
+    })
+    .set({
+      hour: 3,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    }),
+
+  "overmorgen om 3 uur": getDate()
+    .plus({
+      day: 2,
+    })
+    .set({
+      hour: 15,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    }),
 };
 
 for (const [input, expectedDate] of Object.entries(tests)) {
