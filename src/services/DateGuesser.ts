@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable security/detect-unsafe-regex */
 
-import { DateTime } from "luxon";
+import type { DateTime } from "luxon";
 
 const ABSOLUTE_DATE_REGEX =
+  // eslint-disable-next-line max-len
   /^(?:op )?(?<day>\d\d?) (?<month>april|augustus|december|februari|januari|juli|juni|maart|mei|november|oktober|september)(?: (?<year>\d{4}))?/v;
 
 const MONTHS = [
@@ -30,10 +32,8 @@ const DAYS = [
   "zondag",
 ];
 
-const DAY_PARTS = ["nacht", "ochtend", "middag", "avond"];
-
 export default class DateGuesser {
-  private normalizeInput(result: string): string {
+  private normalizeInput(input: string): string {
     const replacements = {
       een: "1",
       één: "1",
@@ -48,9 +48,6 @@ export default class DateGuesser {
       tien: "10",
       "'s n8s": "in de nacht",
       n8: "nacht",
-      "'s ochtends": "in de ochtend",
-      "'s middags": "in de middag",
-      "'s avonds": "in de avond",
       "en 1 half uur": "uur en 30 minuten",
       "1 half uur": "30 minuten",
       "anderhalf uur": "1 uur en 30 minuten",
@@ -63,7 +60,10 @@ export default class DateGuesser {
       uurtje: "uur",
       dagen: "dag",
       weken: "week",
+      ",5 uur": " uur en 30 minuut",
     };
+
+    let result = input;
 
     for (const [search, replace] of Object.entries(replacements)) {
       result = result.replace(search, replace);
@@ -107,6 +107,7 @@ export default class DateGuesser {
     return { hour, minute };
   }
 
+  // eslint-disable-next-line max-statements
   private parseBeforeHour(input: string) {
     const result =
       /(?:(?<minute>\d\d?)|kwart) voor (?:half )?(?<hour>\d\d?)/v.exec(
@@ -286,19 +287,8 @@ export default class DateGuesser {
     return this.parseAbsoluteTime(result, input);
   }
 
-  public guess(rawInput: string): DateTime | undefined {
+  public guess(start: DateTime, rawInput: string): DateTime | undefined {
     const input = this.normalizeInput(rawInput);
-
-    // todo: current datetime
-    const start = DateTime.fromObject({
-      year: 2000,
-      month: 1,
-      day: 1,
-      hour: 15,
-      minute: 36,
-      second: 22,
-      millisecond: 611,
-    });
 
     if (ABSOLUTE_DATE_REGEX.test(input)) {
       return this.parseAbsoluteDate(start, input);

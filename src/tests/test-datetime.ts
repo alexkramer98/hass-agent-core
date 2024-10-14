@@ -5,7 +5,7 @@ import updateLocalePlugin from "dayjs/plugin/updateLocale";
 import weekdayPlugin from "dayjs/plugin/weekday";
 import { DateTime } from "luxon";
 
-import DateGuesser from "./services/DateGuesser";
+import DateGuesser from "../services/DateGuesser";
 
 // eslint-disable-next-line import/no-named-as-default-member
 dayjs.extend(updateLocalePlugin);
@@ -272,6 +272,7 @@ const tests = {
   // -------------------
 
   "over 3 uur": getDate().plus({ hours: 3 }),
+  "over 3,5 uur": getDate().plus({ hours: 3, minute: 30 }),
 
   "over 10 minuten": getDate().plus({ minutes: 10 }),
 
@@ -337,9 +338,9 @@ const tests = {
     .plus({ weeks: 2 })
     .set({ hour: 18, minute: 0, second: 0, millisecond: 0 }),
 
-  "op zaterdagmiddag over 2 weken": getDate().set({
+  "op zaterdagmiddag over 2 weken om 5 uur": getDate().set({
     day: 15,
-    hour: 13,
+    hour: 17,
     minute: 0,
     second: 0,
     millisecond: 0,
@@ -471,10 +472,31 @@ const tests = {
       second: 0,
       millisecond: 0,
     }),
+
+  "overmorgen om 6 uur 's ochtends": getDate()
+    .plus({
+      day: 2,
+    })
+    .set({
+      hour: 6,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    }),
 };
 
+const start = DateTime.fromObject({
+  year: 2000,
+  month: 1,
+  day: 1,
+  hour: 15,
+  minute: 36,
+  second: 22,
+  millisecond: 611,
+});
+
 for (const [input, expectedDate] of Object.entries(tests)) {
-  const result = guesser.guess(input);
+  const result = guesser.guess(start, input);
 
   if (result === undefined) {
     console.log(`NOT IMPLEMENTED: ${input}`);

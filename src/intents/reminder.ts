@@ -4,16 +4,34 @@ import type {
   IntentResponse,
 } from "../interfaces";
 import { defineIntent, reply } from "../interfaces";
-import OldDateGuesser from "../services/OldDateGuesser";
 
-const handler = (
+const handler = async (
   context: IntentHandlerContext,
   variables: IntentHandlerVariables,
-): IntentResponse => {
-  //   eslint-disable-next-line putout/putout
-  console.log(variables, new OldDateGuesser().guess(variables.when));
+): Promise<IntentResponse> => {
+  if (variables.when === undefined) {
+    return reply(
+      "Wanneer?",
+      async (response) =>
+        await handler(context, {
+          ...variables,
+          when: response,
+        }),
+    );
+  }
 
-  return reply("yo");
+  if (variables.what === undefined) {
+    return reply(
+      "Waarvoor?",
+      async (response) =>
+        await handler(context, {
+          ...variables,
+          what: response,
+        }),
+    );
+  }
+
+  return reply("Akkoord.");
 };
 
 export default defineIntent({

@@ -22,7 +22,8 @@
     "no-undef-init": "off",
     "compat/compat": "off",
     "camelcase": "off",
-    "func-style": ["error","expression"]
+    "func-style": ["error","expression"],
+    "sonarjs/elseif-without-else": "off"
   },
   "overrides": [
     {
@@ -40,15 +41,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "files": ["src/services/DateGuesser.ts", "src/services/NewDateGuesser.ts"],
-      "rules": {
-        "perfectionist/sort-objects": "off",
-        "security/detect-unsafe-regex": "off",
-        "max-len": "off",
-        "sonarjs/elseif-without-else": "off"
       }
     }
   ]
