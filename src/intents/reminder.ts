@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 import type {
   IntentHandlerContext,
   IntentHandlerVariables,
@@ -30,6 +32,23 @@ const handler = async (
         }),
     );
   }
+
+  const guessedDateTime = context.dateGuesser.guess(
+    DateTime.now(),
+    variables.when,
+  );
+
+  await context.hassClient.callService("todo/add_item", {
+    // @see https://github.com/home-assistant/core/issues/110165.
+    due_date: guessedDateTime
+      .plus({
+        day: 1,
+      })
+      .toISODate(),
+
+    item: `[${guessedDateTime.toFormat("H:mm")}] ${variables.what}`,
+    entity_id: process.env.REMINDER_TODO_ID,
+  });
 
   return reply("Akkoord.");
 };

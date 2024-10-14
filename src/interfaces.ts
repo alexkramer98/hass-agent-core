@@ -1,7 +1,9 @@
+import type DateGuesser from "./services/DateGuesser";
 import type HassClient from "./services/HassClient";
 import type OllamaClient from "./services/OllamaClient";
 
 export interface IntentHandlerContext {
+  dateGuesser: DateGuesser;
   hassClient: HassClient;
   ollamaClient: OllamaClient;
 }

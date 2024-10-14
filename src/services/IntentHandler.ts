@@ -7,16 +7,20 @@ import type {
   IntentVariables,
   MatchedIntent,
 } from "../interfaces";
+import type DateGuesser from "./DateGuesser";
 import type HassClient from "./HassClient";
 import type InputParser from "./InputParser";
 import type OllamaClient from "./OllamaClient";
 
 export default class IntentHandler {
   private readonly pendingAnswers: IntentPendingAnswer[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/max-params
   public constructor(
     private readonly inputParser: InputParser,
     private readonly hassClient: HassClient,
     private readonly ollamaClient: OllamaClient,
+    private readonly dateGuesser: DateGuesser,
   ) {}
 
   private getPendingAnswer(deviceId?: string, messageId?: string) {
@@ -27,7 +31,6 @@ export default class IntentHandler {
       index = this.pendingAnswers.findIndex(
         (item) => item.deviceId === deviceId,
       );
-      // eslint-disable-next-line sonarjs/elseif-without-else
     } else if (messageId !== undefined) {
       index = this.pendingAnswers.findIndex(
         (item) => item.messageId === messageId,
@@ -139,6 +142,7 @@ export default class IntentHandler {
       {
         hassClient: this.hassClient,
         ollamaClient: this.ollamaClient,
+        dateGuesser: this.dateGuesser,
       },
       matchedIntent.matchedVariables,
     );

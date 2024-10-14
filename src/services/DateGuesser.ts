@@ -287,7 +287,7 @@ export default class DateGuesser {
     return this.parseAbsoluteTime(result, input);
   }
 
-  public guess(start: DateTime, rawInput: string): DateTime | undefined {
+  public guess(start: DateTime, rawInput: string): DateTime {
     const input = this.normalizeInput(rawInput);
 
     if (ABSOLUTE_DATE_REGEX.test(input)) {

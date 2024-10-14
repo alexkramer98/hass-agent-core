@@ -1,9 +1,9 @@
 import { config } from "dotenv";
 
+import DateGuesser from "./services/DateGuesser";
 import HassClient from "./services/HassClient";
 import InputParser from "./services/InputParser";
 import IntentHandler from "./services/IntentHandler";
-import OldDateGuesser from "./services/OldDateGuesser";
 import OllamaClient from "./services/OllamaClient";
 import Server from "./services/Server";
 
@@ -30,16 +30,13 @@ const hassClient = new HassClient(
   process.env.HASS_TOKEN,
 );
 const ollamaClient = new OllamaClient(process.env.OLLAMA_ENDPOINT);
-const intentHandler = new IntentHandler(inputParser, hassClient, ollamaClient);
+const dateGuesser = new DateGuesser();
+const intentHandler = new IntentHandler(
+  inputParser,
+  hassClient,
+  ollamaClient,
+  dateGuesser,
+);
 const server = new Server(intentHandler);
 
 server.listen(Number(process.env.PORT));
-
-const dateGuesser = new OldDateGuesser().guess(
-  // "volgende week zondag",
-  "volgende week maandag",
-
-  // "4 januari om 3 uur",
-
-  // "over drie weken op donderdag om half 6",
-);
