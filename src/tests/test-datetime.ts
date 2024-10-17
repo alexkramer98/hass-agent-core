@@ -1,26 +1,6 @@
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import localizedFormatPlugin from "dayjs/plugin/localizedFormat";
-import updateLocalePlugin from "dayjs/plugin/updateLocale";
-import weekdayPlugin from "dayjs/plugin/weekday";
 import { DateTime } from "luxon";
 
 import DateGuesser from "../services/DateGuesser";
-
-// eslint-disable-next-line import/no-named-as-default-member
-dayjs.extend(updateLocalePlugin);
-// eslint-disable-next-line import/no-named-as-default-member
-dayjs.extend(customParseFormat);
-// eslint-disable-next-line import/no-named-as-default-member
-dayjs.locale("nl");
-dayjs.updateLocale("nl", {
-  weekStart: 1,
-});
-
-// eslint-disable-next-line import/no-named-as-default-member
-dayjs.extend(localizedFormatPlugin);
-// eslint-disable-next-line import/no-named-as-default-member
-dayjs.extend(weekdayPlugin);
 
 const guesser = new DateGuesser();
 
@@ -288,7 +268,7 @@ const tests = {
 
   "over 5 dagen om 4 uur": getDate()
     .plus({ days: 5 })
-    .set({ hours: 16, minute: 0, second: 0, millisecond: 0 }),
+    .set({ hour: 16, minute: 0, second: 0, millisecond: 0 }),
 
   "over 5 minuten": getDate().plus({ minutes: 5 }),
 
@@ -498,16 +478,10 @@ const start = DateTime.fromObject({
 for (const [input, expectedDate] of Object.entries(tests)) {
   const result = guesser.guess(start, input);
 
-  if (result === undefined) {
-    console.log(`NOT IMPLEMENTED: ${input}`);
-
-    continue;
-  }
-
   const pass = result.toMillis() === expectedDate.toMillis();
 
   if (pass) {
-    // console.log(`PASS: ${input}`);
+    console.log(`PASS: ${input}`);
   } else {
     const message = `FAIL: "${input}", expected: ${expectedDate.toJSDate().toLocaleString()}, got: ${result.toJSDate().toLocaleString()}`;
 

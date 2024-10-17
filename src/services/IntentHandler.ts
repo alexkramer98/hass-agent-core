@@ -24,7 +24,6 @@ export default class IntentHandler {
   ) {}
 
   private getPendingAnswer(deviceId?: string, messageId?: string) {
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     let index = -1;
 
     if (deviceId !== undefined) {
@@ -35,10 +34,8 @@ export default class IntentHandler {
       index = this.pendingAnswers.findIndex(
         (item) => item.messageId === messageId,
       );
-      console.log(this.pendingAnswers, index, this.pendingAnswers[index]);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     if (index !== -1) {
       return this.pendingAnswers.splice(index, 1)[0];
     }

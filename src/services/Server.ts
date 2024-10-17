@@ -13,6 +13,7 @@ export default class Server {
     this.app.post(
       "/process",
       expressAsyncHandler(async (request, response) => {
+        // eslint-disable-next-line no-console
         console.log("processing:", request.body);
 
         const { deviceId, message, messageId } = this.getPayload(request.body);
@@ -23,6 +24,7 @@ export default class Server {
           messageId,
         );
 
+        // eslint-disable-next-line no-console
         console.log("replying:", reply);
 
         response.send({
@@ -69,7 +71,8 @@ export default class Server {
       message: message
         .toLowerCase()
         .trim()
-        .replaceAll(/[^a-z0-9 ]+/gv, ""),
+        // eslint-disable-next-line regexp/require-unicode-regexp,regexp/require-unicode-sets-regexp
+        .replaceAll(/[^\d a-zàáâäçèéêëíîïñóôöúûü-]+/g, ""),
 
       messageId,
     };

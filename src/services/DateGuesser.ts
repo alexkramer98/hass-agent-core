@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable security/detect-unsafe-regex */
+/* eslint-disable max-lines */
 
 import type { DateTime } from "luxon";
 
 const ABSOLUTE_DATE_REGEX =
-  // eslint-disable-next-line max-len
   /^(?:op )?(?<day>\d\d?) (?<month>april|augustus|december|februari|januari|juli|juni|maart|mei|november|oktober|september)(?: (?<year>\d{4}))?/v;
 
 const MONTHS = [
@@ -148,6 +148,7 @@ export default class DateGuesser {
     return { hour, minute: 30 };
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity,complexity,max-statements
   private parseAbsoluteTime(start: DateTime, input: string): DateTime {
     let hour = undefined;
     let minute = undefined;
@@ -287,6 +288,7 @@ export default class DateGuesser {
     return this.parseAbsoluteTime(result, input);
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity,max-statements
   public guess(start: DateTime, rawInput: string): DateTime {
     const input = this.normalizeInput(rawInput);
 

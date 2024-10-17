@@ -46,11 +46,13 @@ const handler = async (
       })
       .toISODate(),
 
-    item: `[${guessedDateTime.toFormat("H:mm")}] ${variables.what}`,
+    item: `[${guessedDateTime.toLocal().setZone("Europe/Amsterdam").toFormat("H:mm")}] ${variables.what}`,
     entity_id: process.env.REMINDER_TODO_ID,
   });
 
-  return reply("Akkoord.");
+  return reply(
+    guessedDateTime.toLocal().setZone("Europe/Amsterdam").toFormat("H:mm"),
+  );
 };
 
 export default defineIntent({

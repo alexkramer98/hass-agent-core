@@ -1,14 +1,9 @@
 import axios from "axios";
 
 export default class OllamaClient {
-  private readonly endpoint: string;
   private readonly conversations = [];
 
-  public constructor(endpoint: string) {
-    this.endpoint = endpoint;
-  }
-
-  // public async startConversation() {}
+  public constructor(private readonly endpoint: string) {}
 
   public async chat(message: string) {
     return await axios.post(`${this.endpoint}/api/chat/`, {

@@ -9,7 +9,7 @@ export default class InputParser {
     const regexString = input
       .replaceAll("[", "(")
       .replaceAll("]", ")?")
-      // eslint-disable-next-line max-len
+
       // eslint-disable-next-line regexp/prefer-named-capture-group,regexp/strict,prefer-named-capture-group,regexp/no-super-linear-move,regexp/require-unicode-regexp,regexp/require-unicode-sets-regexp
       .replaceAll(/{([^}]+)}/g, "(?<$1>.+?)");
 
@@ -52,7 +52,6 @@ export default class InputParser {
 
     const intents = await Promise.all(promises);
 
-    // eslint-disable-next-line max-len
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-member-access
     this.intents = intents.map((item) => item.default);
   }

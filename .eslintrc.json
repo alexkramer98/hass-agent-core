@@ -9,21 +9,26 @@
   "rules": {
     "no-duplicate-imports": "off",
     "import/no-duplicates": "off",
-    "putout/putout": "off",
     "perfectionist/sort-objects": "off",
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
     "@typescript-eslint/prefer-destructuring": "off",
     "@typescript-eslint/naming-convention": "off",
-    "no-console": "off",
+    "no-console": "error",
     "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
     "import/no-unused-modules": "off",
-    "max-len": ["error", 120],
     "@typescript-eslint/parameter-properties": ["error", { "prefer": "parameter-property" }],
     "no-undef-init": "off",
     "compat/compat": "off",
     "camelcase": "off",
     "func-style": ["error","expression"],
-    "sonarjs/elseif-without-else": "off"
+    "sonarjs/elseif-without-else": "off",
+    "@stylistic/max-len": "off",
+    "putout/putout": "off",
+    "max-len": "off",
+    "no-continue": "off",
+    "@typescript-eslint/no-magic-numbers": ["error", {
+      "ignore": [0,1,-1]
+    }]
   },
   "overrides": [
     {
@@ -32,15 +37,15 @@
         "import/no-anonymous-default-export": "off",
         "import/no-duplicates": "off",
         "no-duplicate-imports": "off",
-        "putout/putout": [
-          "error",
-          {
-            "rules": {
-              "merge-duplicate-imports": "off",
-              "remove-nested-blocks": "off"
-            }
-          }
-        ]
+        "max-statements": "warn"
+      }
+    },
+    {
+      "files": "src/tests/*",
+      "rules": {
+        "max-lines": "off",
+        "no-console": "off",
+        "@typescript-eslint/no-magic-numbers": "off"
       }
     }
   ]
