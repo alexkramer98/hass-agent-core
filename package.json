@@ -2,7 +2,7 @@
   "name": "hass-agent-node",
   "scripts": {
     "start": "tsx ./src/index.ts",
-    "publish": "docker buildx create --use && docker buildx build --push --platform linux/amd64 -t alexkramer98/hass-agent-core ."
+    "publish": "docker build --push --platform linux/amd64 -t alexkramer98/hass-agent-core ."
   },
   "dependencies": {
     "axios": "^1.7.7",

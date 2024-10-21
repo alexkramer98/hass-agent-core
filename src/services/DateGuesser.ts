@@ -288,6 +288,27 @@ export default class DateGuesser {
     return this.parseAbsoluteTime(result, input);
   }
 
+  private parseNextWeek(start: DateTime, input: string): DateTime {
+    const weekdayIndex = DAYS.findIndex((day) => input.includes(day));
+
+    let result = start
+      .plus({
+        weeks: 1,
+      })
+      .set({ weekday: 1 });
+
+    if (weekdayIndex === -1) {
+      return this.parseAbsoluteTime(result, input);
+    }
+
+    result = result.set({
+      // @ts-expect-error will always be in range
+      weekday: weekdayIndex + 1,
+    });
+
+    return this.parseAbsoluteTime(result, input);
+  }
+
   // eslint-disable-next-line sonarjs/cognitive-complexity,max-statements
   public guess(start: DateTime, rawInput: string): DateTime {
     const input = this.normalizeInput(rawInput);
@@ -316,6 +337,10 @@ export default class DateGuesser {
       if (input.includes(" uur") || input.includes(" minuut")) {
         return this.parseRelativeHoursMinutes(start, input);
       }
+    }
+
+    if (input.includes("volgende week")) {
+      return this.parseNextWeek(start, input);
     }
 
     if (DAYS.some((item) => input.includes(item))) {

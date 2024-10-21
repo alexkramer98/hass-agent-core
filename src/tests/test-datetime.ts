@@ -381,6 +381,13 @@ const tests = {
     millisecond: 0,
   }),
 
+  vanmiddag: getDate().set({
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
   "deze middag": getDate().set({
     hour: 13,
     minute: 0,
@@ -463,6 +470,38 @@ const tests = {
       second: 0,
       millisecond: 0,
     }),
+
+  "volgende week": getDate().set({
+    day: 3,
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "volgende week donderdag": getDate().set({
+    day: 6,
+    hour: 13,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "volgende week woensdagavond": getDate().set({
+    day: 5,
+    hour: 19,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
+
+  "volgende week zondag om drie uur": getDate().set({
+    day: 9,
+    hour: 15,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  }),
 };
 
 const start = DateTime.fromObject({
@@ -480,9 +519,7 @@ for (const [input, expectedDate] of Object.entries(tests)) {
 
   const pass = result.toMillis() === expectedDate.toMillis();
 
-  if (pass) {
-    console.log(`PASS: ${input}`);
-  } else {
+  if (!pass) {
     const message = `FAIL: "${input}", expected: ${expectedDate.toJSDate().toLocaleString()}, got: ${result.toJSDate().toLocaleString()}`;
 
     console.log(message);
