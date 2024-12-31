@@ -309,7 +309,7 @@ export default class DateGuesser {
     return this.parseAbsoluteTime(result, input);
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity,max-statements
+  // eslint-disable-next-line sonarjs/cognitive-complexity,max-statements,complexity
   public guess(start: DateTime, rawInput: string): DateTime {
     const input = this.normalizeInput(rawInput);
 
