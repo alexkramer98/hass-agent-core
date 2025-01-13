@@ -3142,6 +3142,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/locate-chrome@npm:^0":
+  version: 0.1.2
+  resolution: "@types/locate-chrome@npm:0.1.2"
+  checksum: 10c0/60d906f85144ef36b119e38ace43d5fe97f1843f978b6c0906cf07e15e09e20b5eda4533f199f1f3813e856ac048f0fe85430316a2be61cf55972e66b51c487e
+  languageName: node
+  linkType: hard
+
 "@types/luxon@npm:^3.4.2":
   version: 3.4.2
   resolution: "@types/luxon@npm:3.4.2"
@@ -5782,6 +5789,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"es6-promise@npm:^2.0.0":
+  version: 2.3.0
+  resolution: "es6-promise@npm:2.3.0"
+  checksum: 10c0/66385b045a70989f0f128da0d997ef254a42e835b3160595672fccebad65e79e0b3287d4ea638037ba91b4b78b850aa989d5db8c406ec15427d6f4cb0b0fbf69
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:~0.23.0":
   version: 0.23.1
   resolution: "esbuild@npm:0.23.1"
@@ -8107,6 +8121,7 @@ __metadata:
   dependencies:
     "@evgenyorekhov/prettier-config": "npm:^1.2.0"
     "@types/express": "npm:^4.17.21"
+    "@types/locate-chrome": "npm:^0"
     "@types/luxon": "npm:^3.4.2"
     axios: "npm:^1.7.7"
     body-parser: "npm:^1.20.3"
@@ -8117,6 +8132,7 @@ __metadata:
     express: "npm:^4.21.1"
     express-async-handler: "npm:^1.2.0"
     glob: "npm:^11.0.0"
+    locate-chrome: "npm:^0.1.1"
     luxon: "npm:^3.5.0"
     patch-package: "npm:^8.0.0"
     prettier: "npm:^3.3.3"
@@ -9147,6 +9163,19 @@ __metadata:
   version: 3.0.0
   resolution: "locate-character@npm:3.0.0"
   checksum: 10c0/9da917622395002eb1336fca8cbef1c19904e3dc0b3b8078abe8ff390106d947a86feccecd0346f0e0e19fa017623fb4ccb65263d72a76dfa36e20cc18766b6c
+  languageName: node
+  linkType: hard
+
+"locate-chrome@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "locate-chrome@npm:0.1.1"
+  dependencies:
+    es6-promise: "npm:^2.0.0"
+    queue-async: "npm:^1.0.0"
+    userhome: "npm:^1.0.0"
+  bin:
+    locate-chrome: bin.js
+  checksum: 10c0/1b548360db03059c3f05ac64cf300c8f851068119c69fc724e39aaf37617a49307ef101a482f3cb73e2a14b5f77023d78ad67993609788b448515797d2c3dfa8
   languageName: node
   linkType: hard
 
@@ -11465,6 +11494,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"queue-async@npm:^1.0.0":
+  version: 1.2.1
+  resolution: "queue-async@npm:1.2.1"
+  checksum: 10c0/c2cbf3ca3e590043073a98a57d1d5fd6a867f25aa4c31285afd77302eaa7ab71dc8eba4fc3ae6e7dd4a29d44b9152e4e4e7ee3caae92c8feb2cc2fa272df4a60
+  languageName: node
+  linkType: hard
+
 "queue-microtask@npm:^1.2.2":
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
@@ -13646,6 +13682,13 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.0"
   checksum: 10c0/4ef57b45aa820d7ac6496e9208559986c665e49447cb072744c13b66925a362d96dd5a46c4530a6b8e203e5db5fe849369444440cb22ecfc26c679359e5dfa3c
+  languageName: node
+  linkType: hard
+
+"userhome@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "userhome@npm:1.0.1"
+  checksum: 10c0/ded66b35487f4cd255d54b6e9ddb1f6c8bf9c1886495da7afc8433a123406a1b87ce4b32ea932fc7947958149385e3562ca139b3e2abffd9d630b864989d32f0
   languageName: node
   linkType: hard
 

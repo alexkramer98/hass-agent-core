@@ -11,6 +11,7 @@
     "express": "^4.21.1",
     "express-async-handler": "^1.2.0",
     "glob": "^11.0.0",
+    "locate-chrome": "^0.1.1",
     "luxon": "^3.5.0",
     "patch-package": "^8.0.0",
     "puppeteer": "^23.11.1",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@evgenyorekhov/prettier-config": "^1.2.0",
     "@types/express": "^4.17.21",
+    "@types/locate-chrome": "^0",
     "@types/luxon": "^3.4.2",
     "eslint": "^8.57.0",
     "eslint-config-hardcore": "^47.0.1",

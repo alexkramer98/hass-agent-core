@@ -12,7 +12,10 @@ const WAIT_MIN = 250;
 const WAIT_MAX = 400;
 
 export default class GoogleTasksClient {
-  public constructor() {
+  public constructor(
+    private readonly chromePath: string,
+    private readonly chromeDataPath: string,
+  ) {
     // eslint-disable-next-line new-cap
     puppeteer.use(StealthPlugin());
   }
@@ -36,7 +39,8 @@ export default class GoogleTasksClient {
 
   private async getBrowser(): Promise<Browser> {
     return await puppeteer.launch({
-      userDataDir: "/home/alex/hass-agent-chrome-data",
+      executablePath: this.chromePath,
+      userDataDir: this.chromeDataPath,
       args: ["--no-sandbox"],
     });
   }
@@ -137,6 +141,8 @@ export default class GoogleTasksClient {
 
       // eslint-disable-next-line no-console
       console.log("Google Tasks Client: touched session");
+    } catch (error) {
+      console.error(error);
     } finally {
       await browser.close();
     }

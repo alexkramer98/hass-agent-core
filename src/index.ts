@@ -1,4 +1,5 @@
 import { config } from "dotenv";
+import locateChrome from "locate-chrome";
 import { ToadScheduler } from "toad-scheduler";
 
 import DateGuesser from "./services/DateGuesser";
@@ -27,13 +28,27 @@ if (process.env.HASS_TOKEN === undefined) {
   throw new Error("Hass token is undefined.");
 }
 
+if (process.env.CHROME_DATA_PATH === undefined) {
+  throw new Error("Chrome data path is undefined.");
+}
+
 const hassClient = new HassClient(
   process.env.HASS_ENDPOINT,
   process.env.HASS_TOKEN,
 );
 const ollamaClient = new OllamaClient(process.env.OLLAMA_ENDPOINT);
 const dateGuesser = new DateGuesser();
-const googleTasksClient = new GoogleTasksClient();
+
+const chromePath = await locateChrome();
+
+if (chromePath === null) {
+  throw new Error("No path found for Chrome.");
+}
+
+const googleTasksClient = new GoogleTasksClient(
+  chromePath,
+  process.env.CHROME_DATA_PATH,
+);
 const scheduler = new ToadScheduler();
 
 googleTasksClient.scheduleSessionKeepalive(scheduler);
