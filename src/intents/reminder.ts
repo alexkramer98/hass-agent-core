@@ -38,17 +38,7 @@ const handler = async (
     variables.when,
   );
 
-  await context.hassClient.callService("todo/add_item", {
-    // @see https://github.com/home-assistant/core/issues/110165.
-    due_date: guessedDateTime
-      .plus({
-        day: 1,
-      })
-      .toISODate(),
-
-    item: `${guessedDateTime.toFormat("H:mm")}: ${variables.what}`,
-    entity_id: process.env.REMINDER_TODO_ID,
-  });
+  await context.googleTasksClient.createTask(variables.what, guessedDateTime);
 
   return reply("Akkoord.");
 };

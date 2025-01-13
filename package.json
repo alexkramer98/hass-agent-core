@@ -13,6 +13,10 @@
     "glob": "^11.0.0",
     "luxon": "^3.5.0",
     "patch-package": "^8.0.0",
+    "puppeteer": "^23.11.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "toad-scheduler": "^3.0.1",
     "tsx": "^4.19.1"
   },
   "devDependencies": {

@@ -1,5 +1,7 @@
 import crypto from "node:crypto";
 
+import type { ToadScheduler } from "toad-scheduler";
+
 import type {
   Intent,
   IntentPendingAnswer,
@@ -8,6 +10,7 @@ import type {
   MatchedIntent,
 } from "../interfaces";
 import type DateGuesser from "./DateGuesser";
+import type GoogleTasksClient from "./GoogleTasksClient";
 import type HassClient from "./HassClient";
 import type InputParser from "./InputParser";
 import type OllamaClient from "./OllamaClient";
@@ -21,6 +24,8 @@ export default class IntentHandler {
     private readonly hassClient: HassClient,
     private readonly ollamaClient: OllamaClient,
     private readonly dateGuesser: DateGuesser,
+    private readonly googleTasksClient: GoogleTasksClient,
+    private readonly scheduler: ToadScheduler,
   ) {}
 
   private getPendingAnswer(deviceId?: string, messageId?: string) {
@@ -140,6 +145,8 @@ export default class IntentHandler {
         hassClient: this.hassClient,
         ollamaClient: this.ollamaClient,
         dateGuesser: this.dateGuesser,
+        googleTasksClient: this.googleTasksClient,
+        scheduler: this.scheduler,
       },
       matchedIntent.matchedVariables,
     );
