@@ -27,14 +27,6 @@ if (process.env.HASS_TOKEN === undefined) {
   throw new Error("Hass token is undefined.");
 }
 
-if (process.env.GOOGLE_EMAIL === undefined) {
-  throw new Error("Google email is undefined.");
-}
-
-if (process.env.GOOGLE_PASS === undefined) {
-  throw new Error("Google pass is undefined.");
-}
-
 const hassClient = new HassClient(
   process.env.HASS_ENDPOINT,
   process.env.HASS_TOKEN,
